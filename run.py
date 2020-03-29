@@ -1,14 +1,30 @@
 from flask import Flask
 from dotenv import load_dotenv
-
-from config import config
+from peewee import *
+from playhouse.pool import PooledPostgresqlExtDatabase
+import os
+from playhouse.db_url import connect
 
 #loads env variables from the .env file
 load_dotenv()
 
+from config import config
+from internals.context import Context
+from internals.employee import controller as employee_controller
+
+from internals.employee import employee
+from internals.employee import address
+
 #sets the flask app
 app = Flask(__name__)
 app.config.from_object(config["development"])
+
+
+Context.db.create_tables([employee.Employee, address.Address])
+
+#routes
+app.register_blueprint(employee_controller.employee_controller)
+
 
 @app.route("/")
 def index():
