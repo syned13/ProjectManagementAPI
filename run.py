@@ -13,6 +13,7 @@ from internals.context import Context
 from internals.employee import controller as employee_controller
 
 from internals.employee import employee
+from internals.employee import phone
 from internals.employee import address
 
 #sets the flask app
@@ -20,7 +21,7 @@ app = Flask(__name__)
 app.config.from_object(config["development"])
 
 
-Context.db.create_tables([employee.Employee, address.Address])
+Context.db.create_tables([employee.Employee, address.Address, phone.Phone])
 
 #routes
 app.register_blueprint(employee_controller.employee_controller)
