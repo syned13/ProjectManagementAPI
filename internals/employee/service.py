@@ -86,12 +86,13 @@ def get_all_phones():
 
 def update_phone(body):
     validate_phone_fields(body)
-
+    employee = Employee()
+    
     try:
         employee = get_employee(body["owner_id"])
     except models.NotFoundError:
         raise models.InvalidInputError("owner id does not exist")
-    
+
     phone = Phone(phone_type=body["phone_type"], phone_number=body["phone_number"], area_code=body["area_code"], owner=employee)
     phone.save()
 

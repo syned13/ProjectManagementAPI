@@ -58,7 +58,7 @@ def specific_employee(id):
             return jsonify({"message":str(e)}), 400
 
 
-@employee_controller.route("/phone", methods=["POST", "GET"])
+@employee_controller.route("/phone", methods=["POST", "GET", "PUT"])
 def phone():
     if request.method == "POST":
         body = {}
@@ -74,21 +74,7 @@ def phone():
 
         return jsonify({"message":"phone added"}), 201
     
-    if request.method == "GET":
-        return jsonify(service.get_all_phones())
-
-
-@employee_controller.route("/phone/<string:area_code>/<string:phone_number>", methods=["GET", "DELETE", "PUT"])
-def specific_phone(area_code, phone_number):
-    try:
-        if request.method == "GET":
-            return jsonify(service.get_phone(phone_number, area_code).to_json())
-        
-        if request.method == "DELETE":
-            service.remove_phone(phone_number, area_code)
-            return jsonify({"message":"phone deleted"}), 200
-        
-        if request.method == "PUT":
+    if request.method == "PUT":
             body = {}
             try:
                 body = request.get_json(force=True)
@@ -100,6 +86,20 @@ def specific_phone(area_code, phone_number):
             except models.InvalidRequestError as e:
                 return jsonify({"message": e.message}),400
 
+    if request.method == "GET":
+        return jsonify(service.get_all_phones())
+
+
+@employee_controller.route("/phone/<string:area_code>/<string:phone_number>", methods=["GET", "DELETE"])
+def specific_phone(area_code, phone_number):
+    try:
+        if request.method == "GET":
+            return jsonify(service.get_phone(phone_number, area_code).to_json())
+        
+        if request.method == "DELETE":
+            service.remove_phone(phone_number, area_code)
+            return jsonify({"message":"phone deleted"}), 200
+        
     except models.NotFoundError as e:
         return jsonify({"message": e.message}),404
     
