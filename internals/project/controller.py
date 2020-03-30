@@ -52,6 +52,9 @@ def project_employee(project_id, employee_id):
         if request.method == "DELETE":
             service.remove_employee_from_project(project_id, employee_id)
             return jsonify({"message":"employee removed from project"})
+    
+    except shared_models.InvalidRequestError as e:
+        return jsonify({"message": str(e.message)}), 400
     except shared_models.NotFoundError as e:
         return jsonify({"message": str(e.message)}), 404
 
