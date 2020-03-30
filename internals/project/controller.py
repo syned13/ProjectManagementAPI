@@ -32,7 +32,6 @@ def project():
    
 @project_controller.route("/project/<int:id>", methods=["GET", "DELETE"])
 def specific_project(id):
-
     try:
         if request.method == "GET":
             return jsonify(service.get_project(id).to_json())
@@ -41,3 +40,18 @@ def specific_project(id):
             return jsonify({"message":"project deleted"})
     except shared_models.NotFoundError as e:
         return jsonify({"message": str(e.message)}), 404
+
+    return ""
+
+@project_controller.route("/project/<int:project_id>/employee/<int:employee_id>", methods=["POST", "DELETE"])
+def project_employee(project_id, employee_id):
+    try:
+        if request.method == "POST":
+            service.add_employee_to_project(project_id, employee_id)
+            return jsonify({"message":"employee added to project"})
+        if request.method == "DELETE":
+            service.remove_employee_from_project(project_id, employee_id)
+            return jsonify({"message":"employee removed from project"})
+    except shared_models.NotFoundError as e:
+        return jsonify({"message": str(e.message)}), 404
+

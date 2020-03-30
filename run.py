@@ -4,6 +4,7 @@ from peewee import *
 from playhouse.pool import PooledPostgresqlExtDatabase
 import os
 from playhouse.db_url import connect
+from flask_cors import CORS
 
 #loads env variables from the .env file
 load_dotenv()
@@ -17,14 +18,17 @@ from internals.employee import employee
 from internals.employee import phone
 from internals.employee import address
 
-from internals.project.models import Project
+from internals.project.models import Project, ProjectEmployee
 
 #sets the flask app
 app = Flask(__name__)
 app.config.from_object(config["development"])
 
+#enables cors
+CORS(app)
 
-Context.db.create_tables([employee.Employee, address.Address, phone.Phone, Project])
+
+Context.db.create_tables([employee.Employee, address.Address, phone.Phone, Project, ProjectEmployee])
 
 #routes
 app.register_blueprint(employee_controller.employee_controller)

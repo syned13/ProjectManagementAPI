@@ -13,12 +13,19 @@ class Project(models.BaseModel):
     budget = DoubleField()
     leader = ForeignKeyField(employee.Employee, backref="leader")
 
+    def __init__(self, *args, **kwargs):
+        super(Project, self).__init__(*args, **kwargs)
+        self.employees = []
+        
+
     def to_json(self):
         return {
             "project_type":self.project_type, 
+            "id": self.id,
             "name":self.name, 
             "budget":self.budget, 
             "leader":self.leader.to_json(), 
+            "employees_ids": self.employees
         }
 
 class ProjectEmployee(models.BaseModel):
