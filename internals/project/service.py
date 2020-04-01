@@ -1,3 +1,5 @@
+from peewee import *
+
 from internals.project import utils
 from internals.project import models
 from internals.project.models import Project, ProjectEmployee
@@ -48,10 +50,15 @@ def update_project(body):
 
 def get_project(id):
     try:
-        return models.Project.get(models.Project.id == id)
+        project = models.Project.get(models.Project.id == id)
+        raw_project_employee = ProjectEmployee.select().where(ProjectEmployee.project == project)
+        for project_employee in raw_project_employee:
+            project.employees.append(project_employee.employee.id)
+
+        return project
     except models.Project.DoesNotExist:
         raise shared_models.NotFoundError
-
+    
 def remove_project(id):
     try:
         if Project.delete().where(Project.id == id).execute() == 0:
@@ -63,9 +70,13 @@ def add_employee_to_project(project_id, employee_id):
     try:
         project = models.Project.get(models.Project.id == project_id)
         employee = employee_service.get_employee(employee_id)
+        # project_employee = ProjectEmployee(project=project, employee=employee)
+        # project_employee.save()
         ProjectEmployee.create(project=project, employee=employee)
     except models.Project.DoesNotExist:
         raise shared_models.NotFoundError
+    except IntegrityError as e:
+        raise shared_models.InvalidInputError("employee already is assigned to project")
 
 def remove_employee_from_project(project_id, employee_id):
     try:

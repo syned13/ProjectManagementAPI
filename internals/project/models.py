@@ -37,7 +37,8 @@ class ProjectEmployee(models.BaseModel):
             "employee": self.employee.to_json(),
             "project": self.project.to_json(),
         }
-
+    class Meta():
+        primary_key = CompositeKey('project','employee')
 class ProjectType(Enum):
     FINANCE_PROJECT = "finance_project"
     ENGINEERING_PROJECT = "engineering_project"
