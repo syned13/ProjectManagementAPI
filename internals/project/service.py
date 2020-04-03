@@ -1,5 +1,6 @@
 from peewee import *
 
+from internals.context import Context
 from internals.project import utils
 from internals.project import models
 from internals.project.models import Project, ProjectEmployee
@@ -43,6 +44,7 @@ def update_project(body):
     try:
         leader = employee_service.get_employee(body["leader_id"])
     except shared_models.NotFoundError:
+        Context.db.rollback()
         raise shared_models.InvalidInputError("leader id does not exist")
     
     project = Project(project_type=body["type"], name=body["name"], budget=body["budget"], leader=leader)
@@ -64,6 +66,7 @@ def remove_project(id):
         if Project.delete().where(Project.id == id).execute() == 0:
             raise shared_models.NotFoundError()
     except Employee.DoesNotExist:
+        Context.db.rollback()
         raise shared_models.NotFoundError()
 
 def add_employee_to_project(project_id, employee_id):
@@ -76,6 +79,7 @@ def add_employee_to_project(project_id, employee_id):
     except models.Project.DoesNotExist:
         raise shared_models.NotFoundError
     except IntegrityError as e:
+        Context.db.rollback()
         raise shared_models.InvalidInputError("employee already is assigned to project")
 
 def remove_employee_from_project(project_id, employee_id):
@@ -87,4 +91,5 @@ def remove_employee_from_project(project_id, employee_id):
             raise shared_models.NotFoundError
     
     except ProjectEmployee.DoesNotExist:
+        Context.db.rollback()
         raise shared_models.NotFoundError()

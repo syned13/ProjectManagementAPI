@@ -1,5 +1,6 @@
 from peewee import *
 
+from internals.context import Context
 from internals import models
 from internals.employee.employee import Employee
 from internals.employee.address import Address
@@ -34,6 +35,7 @@ def remove_employee(id):
         if Employee.delete().where(Employee.id == id).execute() == 0:
             raise models.NotFoundError
     except Employee.DoesNotExist:
+        Context.db.rollback()
         raise models.NotFoundError
 
 def update_employee(body):
@@ -61,6 +63,7 @@ def add_phone(body):
     try:
         Phone.create(phone_type=body["phone_type"], phone_number=body["phone_number"], area_code=body["area_code"], owner=employee)
     except IntegrityError as e:
+        Context.db.rollback()
         raise models.InvalidInputError("duplicate phone number")
 
 def remove_phone(phone_number, area_code):
@@ -68,6 +71,7 @@ def remove_phone(phone_number, area_code):
         if Phone.delete().where(Phone.phone_number == phone_number and Phone.area_code == area_code).execute() == 0:
             raise models.NotFoundError
     except Employee.DoesNotExist:
+        Context.db.rollback()
         raise models.NotFoundError
 
 def get_phone(phone_number, area_code):
