@@ -47,7 +47,7 @@ def update_project(body):
         Context.db.rollback()
         raise shared_models.InvalidInputError("leader id does not exist")
     
-    project = Project(project_type=body["type"], name=body["name"], budget=body["budget"], leader=leader)
+    project = Project(id=body["id"],project_type=body["type"], name=body["name"], budget=body["budget"], leader=leader)
     project.save()
 
 def get_project(id):
