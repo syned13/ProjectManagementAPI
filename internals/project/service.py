@@ -86,8 +86,11 @@ def remove_employee_from_project(project_id, employee_id):
     try:
         project = get_project(project_id)
         employee = employee_service.get_employee(employee_id)
-
-        if ProjectEmployee.delete().where(ProjectEmployee.project == project and ProjectEmployee.employee == employee) == 0:
+        # project_employee = ProjectEmployee.get(ProjectEmployee.project.id == project.id and ProjectEmployee.employee.id == employee.id)
+        # result = project_employee.delete()
+        
+        result = ProjectEmployee.delete().where(ProjectEmployee.employee == employee and ProjectEmployee.project == project).execute()
+        if result == 0:
             raise shared_models.NotFoundError
     
     except ProjectEmployee.DoesNotExist:
