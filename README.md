@@ -18,4 +18,5 @@ Create a .env file with a variable ```DB_CONNECTION```, a connection string to a
 ## Usage
 
 Run run.py file
+
 ```python3 run.py```
