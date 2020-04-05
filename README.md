@@ -1,5 +1,5 @@
 # ProjectManagementAPI
-REST API for an app that allows creation of projects and assign employees to it.
+REST API for an app that allows creation of projects and assign employees to them.
 
 This was made as a final project for the database course in the Pontificia Universidad Catolica Madre y Maestra(PUCMM),
 in my exchange semester through the National Exchange Program(MOVENI).
